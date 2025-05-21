@@ -62,7 +62,3 @@ npm run build
     ]
   }
   ```
-
-## Deployment
-
-Deploy the `dist/` folder to Vercel, Netlify, or any static site host.

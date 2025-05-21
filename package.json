@@ -1,15 +1,21 @@
 {
-  "name": "vite-project",
+  "name": "fashion-recommender-app",
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "description": "AI Fashion Outfit Recommender",
+  "main": "src/index.js",
   "scripts": {
+    "start": "react-scripts start",
     "dev": "vite",
-    "build": "vite build",
+    "build": "react-scripts build",
     "lint": "eslint .",
     "preview": "vite preview"
   },
   "dependencies": {
+    "@mediapipe/tasks-vision": "^0.10.22-rc.20250304",
+    "@tensorflow-models/body-pix": "^2.2.1",
+    "@tensorflow/tfjs": "^4.22.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0"
   },
