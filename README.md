@@ -2,36 +2,30 @@
 
 Below is a visual overview of the flow and structure of the Fashion Recommender App:
 
-## High-level Flow
+---
 
-```mermaid
-flowchart TD
-  User([User])
-    subgraph Frontend (React)
-      UI[Form: Upload Image<br>Enter Gender, Age, Prompt]
-      Combine[CombineSegmentationLandmarks.jsx<br>(extracts measurements)]
-      APIcall[App.jsx<br>(handles API calls)]
-      Loader[Loader.jsx]
-      Outfits[OutfitList.jsx]
-    end
+## System Overview
 
-    subgraph Backend (APIs)
-      ImgProc[Image Processing<br/>(BodyPix + MediaPipe in browser)]
-      BodyAPI[body-classification-model API<br>/predict]
-      FashionAPI[fashion-api API<br>/recommend]
-      DB[Outfit Data]
-    end
-
-    User --> UI
-    UI --> Combine
-    Combine -- "shoulder, waist, hips" --> APIcall
-    APIcall -- "measurements, gender, age" --> BodyAPI
-    BodyAPI -- "body type" --> APIcall
-    APIcall -- "gender, body type, prompt" --> FashionAPI
-    FashionAPI -- "recommendations" --> APIcall
-    APIcall --> Outfits
-    Loader -.-> APIcall
-    FashionAPI --- DB
+```
+User
+ │
+ ▼
+Frontend (React)
+ ├─ App.jsx (main logic & flow)
+ ├─ CombineSegmentationLandmarks.jsx (extracts measurements from image)
+ ├─ Loader.jsx (shows loading)
+ └─ OutfitList.jsx (shows recommendations)
+ │
+ ▼
+API Calls
+ ├─ predictBodyType (to body-classification-model API)
+ └─ recommendOutfits / getRecommendations (to fashion-api)
+ │
+ ▼
+Backend APIs
+ ├─ body-classification-model API (/predict)
+ └─ fashion-api (/recommend)
+     └─ outfit data & rules
 ```
 
 ---
