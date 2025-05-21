@@ -1,50 +1,84 @@
-# System Architecture Diagram
+# System Architecture & Design Rationale
 
-Below is a visual overview of the flow and structure of the Fashion Recommender App:
-
----
-
-## System Overview
-
-```
-User
- │
- ▼
-Frontend (React)
- ├─ App.jsx (main logic & flow)
- ├─ CombineSegmentationLandmarks.jsx (extracts measurements from image)
- ├─ Loader.jsx (shows loading)
- └─ OutfitList.jsx (shows recommendations)
- │
- ▼
-API Calls
- ├─ predictBodyType (to body-classification-model API)
- └─ recommendOutfits / getRecommendations (to fashion-api)
- │
- ▼
-Backend APIs
- ├─ body-classification-model API (/predict)
- └─ fashion-api (/recommend)
-     └─ outfit data & rules
-```
+This document explains the **design decisions** behind the Fashion Recommender Web App, with a focus on modularity, privacy, and practical machine learning integration for a seamless user experience.
 
 ---
 
-## Explanation
+## Design Goals
 
-1. **User** uploads a photo and enters age, gender, and prompt in the **UI**.
-2. **CombineSegmentationLandmarks.jsx** processes the image directly in the browser (using TensorFlow BodyPix and MediaPipe) to extract body measurements.
-3. These measurements, along with gender and age, are sent to the **Body Classification API** to predict body type.
-4. The predicted body type, gender, and the user's style prompt are sent to the **Fashion Recommendation API**.
-5. The Fashion Recommendation API queries a database of outfits, scoring them based on rules and prompt relevance.
-6. The final recommendations are returned to the frontend and displayed by **OutfitList.jsx**.
+- **User Privacy:** Perform body measurement extraction directly in the browser so user images are never uploaded to our servers.
+- **Separation of Concerns:** Keep the frontend, measurement extraction, and recommendation logic modular and decoupled for easier maintenance and possible replacement of components.
+- **Extensibility:** APIs for body classification and fashion recommendation are externally hosted and can be swapped out or upgraded without impacting the frontend code.
+- **Transparency:** The process is easy to follow—users know what data is used and how recommendations are generated.
 
 ---
 
-**Key Points:**
-- Measurement extraction happens in-browser for privacy and speed.
-- All API calls are handled in `App.jsx`.
-- The backend is split: one model for body type, one for outfit recommendation.
-- Components are modular and focused on a single responsibility.
+## Architecture Overview
+
+### 1. **Frontend-first Measurement Extraction**
+
+- **Why:** Many users are privacy-sensitive. By doing all measurement extraction in-browser (using TensorFlow BodyPix and MediaPipe), we never transmit their raw images to our servers.
+- **How:**  
+  - The uploaded image is processed in the browser using pre-trained ML models.
+  - Only a few numerical measurements (shoulders, waist, hips) are sent to the backend for body type prediction.
+
+### 2. **Backend as a Set of Lightweight APIs**
+
+- The backend is split into two core APIs:
+  - **Body Classification API:** Receives measurements, returns predicted body type using a Random Forest model.
+  - **Fashion Recommendation API:** Receives gender, body type, and user's style prompt, returns suitable outfits using a combination of rule-based and prompt-based logic.
+- **Why:** This approach allows independent scaling, testing, and potential replacement of either service (e.g., swapping a new ML model).
+- **Modularity:** Each API is focused and stateless, making it easier to maintain and scale.
+
+### 3. **Component-Oriented Frontend**
+
+- **React Components:**
+  - **CombineSegmentationLandmarks.jsx:** Handles all logic for image upload, measurement extraction, and passing results up.
+  - **App.jsx:** Orchestrates user flow, API calls, and state.
+  - **Loader.jsx, OutfitList.jsx:** Simple, single-responsibility UI blocks.
+- **Why:** Encourages code reuse, easier testing, and clear separation of responsibilities.
+
+### 4. **API Call Abstraction**
+
+- All API communication is handled through dedicated modules:
+  - `api.js` (general), `bodyClassification.js`, and `fashionRecommendation.js`.
+- **Why:** If an API endpoint changes or a new service is introduced, only the relevant file needs updating, not the whole codebase.
 
 ---
+
+## System Data Flow
+
+1. **User uploads image and enters details**  
+   → Frontend component extracts measurements in-browser  
+   → Sends only measurements, age, and gender to body type API  
+   → Receives predicted body type
+
+2. **Recommendation Request**  
+   → Sends gender, predicted body type, and user prompt to recommendation API  
+   → Receives list of recommended outfits
+
+3. **Display Results**  
+   → Results are shown in the frontend via a dedicated component
+
+---
+
+## Benefits of This Design
+
+- **Privacy:** No user image ever leaves the browser.
+- **Security:** Only minimal, non-identifiable data sent to backend.
+- **Maintainability:** APIs and frontend can evolve independently.
+- **Flexibility:** Easy to upgrade ML models or change recommendation logic.
+- **User Experience:** Fast, responsive, and transparent process for the end user.
+
+---
+
+## Possible Future Extensions
+
+- **On-device ML for body type prediction** for even greater privacy.
+- **Pluggable recommendation engines** (e.g., collaborative filtering, deep learning).
+- **Localization and accessibility** enhancements.
+- **Integration with e-commerce or wardrobe management platforms**.
+
+---
+
+*This architecture is designed to balance privacy, extensibility, and user-focused simplicity for a modern AI-driven fashion experience.*
