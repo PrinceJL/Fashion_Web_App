@@ -1,32 +1,328 @@
-.app-container {
-  max-width: 600px;
-  margin: 2rem auto;
-  padding: 1.5rem;
-  border-radius: 10px;
-  background: #fafafa;
-  box-shadow: 0 2px 8px #ddd;
+/* ====== Fashion Recommender App Global Styles ====== */
+
+/* Font import (Poppins is elegant and modern) */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+
+:root {
+  --fashion-main: #7a5fff;
+  --fashion-main-dark: #392aa9;
+  --fashion-accent: #ff6f91;
+  --fashion-light: #f7f7fa;
+  --fashion-bg-gradient: linear-gradient(120deg, #f8fafc 70%, #f0eaff 100%);
+  --fashion-white: #fff;
+  --fashion-grey: #eaeaea;
+  --fashion-text: #22223b;
+  --fashion-muted: #76748e;
+  --fashion-border: #e6e6f7;
+  --fashion-shadow: 0 4px 32px #d0d8ff44;
+  --fashion-radius: 16px;
+  --fashion-card-radius: 14px;
+  --fashion-transition: 0.18s cubic-bezier(.38,1.15,.7,1);
 }
-form label {
-  display: block;
-  margin-top: 1rem;
+
+html, body {
+  min-height: 100%;
+  margin: 0;
+  padding: 0;
+  background: var(--fashion-bg-gradient);
+  color: var(--fashion-text);
+  font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;
+  font-size: 17px;
+  letter-spacing: 0.01em;
+  scroll-behavior: smooth;
 }
-form input, form select {
-  margin-left: 1rem;
+
+/* App Container */
+#root, .App {
+  min-height: 100vh;
+  width: 100%;
+  padding: 0;
+  box-sizing: border-box;
+  background: transparent;
 }
+
+/* Headings */
+h1, h2, h3, h4 {
+  font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;
+  font-weight: 700;
+  color: var(--fashion-main-dark);
+  margin-top: 0;
+}
+h2 {
+  font-size: 2rem;
+  margin-bottom: 18px;
+}
+h1 {
+  font-size: 2.4rem;
+}
+
+a {
+  color: var(--fashion-main);
+  text-decoration: none;
+  transition: color var(--fashion-transition);
+}
+a:hover,
+a:focus {
+  color: var(--fashion-accent);
+  text-decoration: underline;
+}
+
+input[type="file"],
+input[type="text"],
+input[type="number"],
+select {
+  padding: 7px 12px;
+  border-radius: 7px;
+  border: 1.3px solid var(--fashion-border);
+  outline: none;
+  background: var(--fashion-white);
+  font-size: 1rem;
+  font-family: inherit;
+  margin-bottom: 10px;
+  transition: border-color 0.2s;
+}
+input[type="file"]:focus,
+input[type="text"]:focus,
+input[type="number"]:focus,
+select:focus {
+  border-color: var(--fashion-main);
+}
+
 button {
-  margin-top: 1.5rem;
-  padding: 0.5rem 1rem;
+  padding: 8px 22px;
+  background: var(--fashion-main);
+  color: var(--fashion-white);
+  border: none;
+  border-radius: 7px;
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 600;
+  box-shadow: 0 2px 8px #d0d8ff22;
+  cursor: pointer;
+  transition: background var(--fashion-transition), box-shadow var(--fashion-transition);
 }
-.error { color: #c00; margin-top: 1rem; }
-.body-type { margin: 1rem 0; font-size: 1.1em; }
-.outfits ul { list-style: none; padding: 0; }
-.outfit-item {
+button:hover,
+button:focus {
+  background: var(--fashion-accent);
+  box-shadow: 0 6px 18px #d0d8ff33;
+}
+
+.outfits-section {
+  max-width: 900px;
+  margin: 38px auto 60px auto;
+  padding: 28px 14px 54px 14px;
+  background: var(--fashion-bg-gradient);
+  border-radius: var(--fashion-radius);
+  box-shadow: var(--fashion-shadow);
+}
+
+.outfits-title {
+  font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--fashion-main-dark);
+  text-align: center;
+  margin-bottom: 30px;
+  letter-spacing: 1px;
+}
+
+.outfit-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.outfit-card {
   display: flex;
-  gap: 1.5rem;
-  margin-bottom: 1.5rem;
-  align-items: center;
-  background: #fff;
-  padding: 1rem;
-  border-radius: 8px;
+  flex-direction: row;
+  gap: 28px;
+  align-items: flex-start;
+  background: var(--fashion-white);
+  border-radius: var(--fashion-card-radius);
+  padding: 22px 16px;
+  margin-bottom: 32px;
+  box-shadow: 0 2px 12px #e6e8fa28;
+  transition: box-shadow var(--fashion-transition), background var(--fashion-transition);
 }
-.loader { margin: 1rem 0; }
+.outfit-card:hover {
+  box-shadow: 0 7px 28px #c5aaff2a;
+  background: #f9f5ff;
+}
+
+.outfit-img-wrap {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f3f1f7;
+  border-radius: 11px;
+  padding: 8px;
+  border: 1.5px solid #ded9fa;
+  min-width: 142px;
+  min-height: 180px;
+  box-sizing: border-box;
+}
+.outfit-img {
+  width: 140px;
+  height: auto;
+  border-radius: 7px;
+  object-fit: cover;
+  box-shadow: 0 2px 12px #d0d8ff22;
+}
+.no-image {
+  font-size: 1rem;
+  color: #aaa;
+}
+
+.outfit-info {
+  flex: 1;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  font-size: 17px;
+}
+
+.outfit-label {
+  font-size: 1.12rem;
+  font-weight: 600;
+  color: var(--fashion-main-dark);
+  margin-bottom: 8px;
+  letter-spacing: 0.5px;
+}
+
+.meta-pair {
+  margin-bottom: 4px;
+}
+.meta-label {
+  color: #7451d3;
+  font-weight: 500;
+}
+.meta-value {
+  color: #111;
+  font-weight: 500;
+}
+
+.score-flex {
+  display: flex;
+  gap: 10px;
+  margin: 10px 0 10px 0;
+}
+.score-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 8px;
+  font-size: 0.97rem;
+  font-weight: 500;
+  margin-right: 2px;
+  box-shadow: 0 1px 4px #ece6ff22;
+}
+.score-style {
+  background: #e6eafd;
+  color: var(--fashion-main-dark);
+}
+.score-total {
+  background: #ffe3f1;
+  color: #a13c71;
+}
+.score-bodyshape {
+  background: #e5ffe4;
+  color: #2c8f4f;
+}
+
+.attr-table {
+  margin-top: 12px;
+  border-radius: 7px;
+  background: #f6f6ff;
+  border-collapse: collapse;
+  min-width: 200px;
+  box-shadow: 0 1px 6px #eee;
+}
+.attr-table td {
+  padding: 6px 14px;
+}
+.attr-key {
+  color: #7d5ca6;
+  font-weight: 600;
+  text-align: right;
+  white-space: nowrap;
+}
+.attr-value {
+  color: #23213f;
+  font-weight: 500;
+  text-align: left;
+}
+
+input[type="file"] {
+  background: #f3f1f7;
+  border-radius: 7px;
+  border: 1.2px solid #ded9fa;
+  font-size: 1rem;
+  padding: 7px 12px;
+  margin: 12px 0;
+}
+
+.status-message {
+  margin: 10px 0;
+  color: var(--fashion-main);
+  font-weight: bold;
+  font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;
+  letter-spacing: 0.5px;
+}
+
+.measurement-summary {
+  margin-top: 12px;
+  font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;
+  color: #222;
+  background: #eef;
+  padding: 10px 18px;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px #e0e7ff33;
+  font-size: 1rem;
+}
+.measurement-summary b {
+  color: var(--fashion-main-dark);
+}
+
+canvas {
+  border: 1.7px solid #888;
+  max-width: 320px;
+  background: #222;
+  margin-top: 12px;
+  display: block;
+  border-radius: 9px;
+  box-shadow: 0 2px 12px #d0d8ff22;
+}
+
+@media (max-width: 900px) {
+  .outfits-section {
+    max-width: 99vw;
+    padding: 10px 2vw 38px 2vw;
+  }
+}
+@media (max-width: 768px) {
+  .outfit-card {
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 7px;
+  }
+  .outfit-img-wrap {
+    margin-bottom: 10px;
+  }
+  .outfit-info {
+    width: 100%;
+  }
+  .attr-table {
+    font-size: 15px;
+    min-width: 120px;
+  }
+}
+@media (max-width: 480px) {
+  .outfit-img {
+    width: 96vw;
+    max-width: 98vw;
+  }
+  .outfit-card {
+    padding: 7px 1vw;
+  }
+}
+
+/* ===== End Fashion Recommender App Global Styles ===== */

@@ -1,64 +1,56 @@
-# Fashion Outfit Recommender Frontend
+# System Architecture Diagram
 
-A React app that consumes the [Fashion API](https://fashion-api-37s7.onrender.com).
+Below is a visual overview of the flow and structure of the Fashion Recommender App:
 
-## Features
+## High-level Flow
 
-- User-friendly form for outfit recommendations
-- Real-time API integration
-- Cards with images and detailed attributes
-- Responsive and modern UI
+```mermaid
+flowchart TD
+  User([User])
+    subgraph Frontend (React)
+      UI[Form: Upload Image<br>Enter Gender, Age, Prompt]
+      Combine[CombineSegmentationLandmarks.jsx<br>(extracts measurements)]
+      APIcall[App.jsx<br>(handles API calls)]
+      Loader[Loader.jsx]
+      Outfits[OutfitList.jsx]
+    end
 
-## Setup
+    subgraph Backend (APIs)
+      ImgProc[Image Processing<br/>(BodyPix + MediaPipe in browser)]
+      BodyAPI[body-classification-model API<br>/predict]
+      FashionAPI[fashion-api API<br>/recommend]
+      DB[Outfit Data]
+    end
 
-```sh
-npm install
-npm run dev
+    User --> UI
+    UI --> Combine
+    Combine -- "shoulder, waist, hips" --> APIcall
+    APIcall -- "measurements, gender, age" --> BodyAPI
+    BodyAPI -- "body type" --> APIcall
+    APIcall -- "gender, body type, prompt" --> FashionAPI
+    FashionAPI -- "recommendations" --> APIcall
+    APIcall --> Outfits
+    Loader -.-> APIcall
+    FashionAPI --- DB
 ```
 
-Visit [http://localhost:5173](http://localhost:5173) in your browser.
+---
 
-## Build
+## Explanation
 
-```sh
-npm run build
-```
+1. **User** uploads a photo and enters age, gender, and prompt in the **UI**.
+2. **CombineSegmentationLandmarks.jsx** processes the image directly in the browser (using TensorFlow BodyPix and MediaPipe) to extract body measurements.
+3. These measurements, along with gender and age, are sent to the **Body Classification API** to predict body type.
+4. The predicted body type, gender, and the user's style prompt are sent to the **Fashion Recommendation API**.
+5. The Fashion Recommendation API queries a database of outfits, scoring them based on rules and prompt relevance.
+6. The final recommendations are returned to the frontend and displayed by **OutfitList.jsx**.
 
-## App Structure
+---
 
-- `src/` — Source code:
-  - `App.jsx` — Main app logic
-  - `api.js` — API calls
-  - `components/` — UI components
-  - `style.css` — App-wide CSS
-- `public/index.html` — HTML entrypoint
+**Key Points:**
+- Measurement extraction happens in-browser for privacy and speed.
+- All API calls are handled in `App.jsx`.
+- The backend is split: one model for body type, one for outfit recommendation.
+- Components are modular and focused on a single responsibility.
 
-## API Contract
-
-**POST** `https://fashion-api-37s7.onrender.com/recommend`
-- Request:
-  ```json
-  {
-    "gender": "male",
-    "body_shape": "Hourglass",
-    "prompt": "I want a formal outfit for a summer wedding, prefer short sleeves and cotton",
-    "topk": 3
-  }
-  ```
-- Response:
-  ```json
-  {
-    "recommendations": [
-      {
-        "gender": "male",
-        "image_label": "...",
-        "image_url": "...",
-        "attributes": { ... },
-        "total_score": 87,
-        "style_score": 61,
-        "bodyshape_score": 26
-      },
-      ...
-    ]
-  }
-  ```
+---
